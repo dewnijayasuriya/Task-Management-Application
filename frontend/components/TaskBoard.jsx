@@ -41,11 +41,14 @@ export default function TaskBoard() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
   const [assigningTask, setAssigningTask] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("ALL");
+  const [assigneeFilter, setAssigneeFilter] = useState("ALL");
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: { distance: 5 },
-    })
+    }),
   );
 
   const loadTasks = async () => {
@@ -65,15 +68,48 @@ export default function TaskBoard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const assigneeOptions = useMemo(() => {
+    const assignees = new Map();
+    for (const task of tasks) {
+      if (task.assignedUser?._id && task.assignedUser.name) {
+        assignees.set(task.assignedUser._id, task.assignedUser.name);
+      }
+    }
+    return Array.from(assignees, ([id, name]) => ({ id, name })).sort((a, b) =>
+      a.name.localeCompare(b.name),
+    );
+  }, [tasks]);
+
+  const filteredTasks = useMemo(() => {
+    const normalizedSearch = searchTerm.trim().toLowerCase();
+
+    return tasks.filter((task) => {
+      const matchesSearch =
+        !normalizedSearch ||
+        task.title.toLowerCase().includes(normalizedSearch) ||
+        task.description?.toLowerCase().includes(normalizedSearch);
+      const matchesStatus =
+        statusFilter === "ALL" || task.status === statusFilter;
+      const matchesAssignee =
+        assigneeFilter === "ALL" ||
+        (assigneeFilter === "UNASSIGNED" && !task.assignedUser) ||
+        (assigneeFilter === "MINE" &&
+          String(task.assignedUser?._id) === String(user.id)) ||
+        String(task.assignedUser?._id) === assigneeFilter;
+
+      return matchesSearch && matchesStatus && matchesAssignee;
+    });
+  }, [tasks, searchTerm, statusFilter, assigneeFilter, user.id]);
+
   const tasksByStatus = useMemo(() => {
     const grouped = { TODO: [], DOING: [], DONE: [] };
-    for (const task of tasks) {
+    for (const task of filteredTasks) {
       if (grouped[task.status]) {
         grouped[task.status].push(task);
       }
     }
     return grouped;
-  }, [tasks]);
+  }, [filteredTasks]);
 
   const findTaskById = (id) => tasks.find((t) => t._id === id);
   const findColumnOfTask = (id) => {
@@ -106,16 +142,20 @@ export default function TaskBoard() {
 
     // Optimistic update
     setTasks((prev) =>
-      prev.map((t) => (t._id === activeId ? { ...t, status: destStatus } : t))
+      prev.map((t) => (t._id === activeId ? { ...t, status: destStatus } : t)),
     );
 
     try {
       const updatedTask = await updateTaskStatusApi(activeId, destStatus);
-      setTasks((prev) => prev.map((t) => (t._id === activeId ? updatedTask : t)));
+      setTasks((prev) =>
+        prev.map((t) => (t._id === activeId ? updatedTask : t)),
+      );
     } catch (err) {
       // Revert on failure and surface the error
       setTasks(previousTasks);
-      setError(err.message || "Failed to update task status. Please try again.");
+      setError(
+        err.message || "Failed to update task status. Please try again.",
+      );
     }
   };
 
@@ -174,6 +214,54 @@ export default function TaskBoard() {
         </button>
       </div>
 
+      <div className="grid grid-cols-1 md:grid-cols-[minmax(0,2fr)_minmax(160px,1fr)_minmax(160px,1fr)] gap-3 mb-6">
+        <label className="sr-only" htmlFor="task-search">
+          Search tasks
+        </label>
+        <input
+          id="task-search"
+          type="search"
+          value={searchTerm}
+          onChange={(event) => setSearchTerm(event.target.value)}
+          placeholder="Search tasks by title or description"
+          className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+        />
+
+        <label className="sr-only" htmlFor="task-status-filter">
+          Filter tasks by status
+        </label>
+        <select
+          id="task-status-filter"
+          value={statusFilter}
+          onChange={(event) => setStatusFilter(event.target.value)}
+          className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500"
+        >
+          <option value="ALL">All statuses</option>
+          <option value="TODO">To Do</option>
+          <option value="DOING">Doing</option>
+          <option value="DONE">Done</option>
+        </select>
+
+        <label className="sr-only" htmlFor="task-assignee-filter">
+          Filter tasks by assignee
+        </label>
+        <select
+          id="task-assignee-filter"
+          value={assigneeFilter}
+          onChange={(event) => setAssigneeFilter(event.target.value)}
+          className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500"
+        >
+          <option value="ALL">All assignees</option>
+          <option value="MINE">Assigned to me</option>
+          <option value="UNASSIGNED">Unassigned</option>
+          {assigneeOptions.map((assignee) => (
+            <option key={assignee.id} value={assignee.id}>
+              {assignee.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
       {error && (
         <div className="mb-4">
           <Alert type="error" message={error} />
@@ -213,7 +301,10 @@ export default function TaskBoard() {
       </DndContext>
 
       {showCreateModal && (
-        <CreateTaskModal onClose={() => setShowCreateModal(false)} onCreate={handleCreate} />
+        <CreateTaskModal
+          onClose={() => setShowCreateModal(false)}
+          onCreate={handleCreate}
+        />
       )}
 
       {editingTask && (
@@ -222,7 +313,9 @@ export default function TaskBoard() {
           onClose={() => setEditingTask(null)}
           onSave={handleSaveEdit}
           onDelete={handleDelete}
-          canDelete={user.role === "ADMIN" || editingTask.creator?._id === user.id}
+          canDelete={
+            user.role === "ADMIN" || editingTask.creator?._id === user.id
+          }
         />
       )}
 
