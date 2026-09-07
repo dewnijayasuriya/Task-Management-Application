@@ -7,6 +7,7 @@ export default function CreateTaskModal({ onClose, onCreate }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [status, setStatus] = useState("TODO");
+  const [priority, setPriority] = useState("MEDIUM");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
@@ -21,7 +22,12 @@ export default function CreateTaskModal({ onClose, onCreate }) {
 
     setSubmitting(true);
     try {
-      await onCreate({ title: title.trim(), description: description.trim(), status });
+      await onCreate({
+        title: title.trim(),
+        description: description.trim(),
+        status,
+        priority,
+      });
       onClose();
     } catch (err) {
       setError(err.message || "Failed to create task.");
@@ -35,7 +41,10 @@ export default function CreateTaskModal({ onClose, onCreate }) {
       <div className="w-full max-w-lg bg-white rounded-2xl shadow-xl p-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-slate-900">Create Task</h2>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-600">
+          <button
+            onClick={onClose}
+            className="text-slate-400 hover:text-slate-600"
+          >
             &times;
           </button>
         </div>
@@ -48,7 +57,9 @@ export default function CreateTaskModal({ onClose, onCreate }) {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Title</label>
+            <label className="block text-sm font-medium text-slate-700 mb-1">
+              Title
+            </label>
             <input
               type="text"
               value={title}
@@ -60,7 +71,9 @@ export default function CreateTaskModal({ onClose, onCreate }) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Description</label>
+            <label className="block text-sm font-medium text-slate-700 mb-1">
+              Description
+            </label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -71,7 +84,9 @@ export default function CreateTaskModal({ onClose, onCreate }) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Status</label>
+            <label className="block text-sm font-medium text-slate-700 mb-1">
+              Status
+            </label>
             <select
               value={status}
               onChange={(e) => setStatus(e.target.value)}
@@ -80,6 +95,21 @@ export default function CreateTaskModal({ onClose, onCreate }) {
               <option value="TODO">To Do</option>
               <option value="DOING">Doing</option>
               <option value="DONE">Done</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">
+              Priority
+            </label>
+            <select
+              value={priority}
+              onChange={(e) => setPriority(e.target.value)}
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+            >
+              <option value="LOW">Low</option>
+              <option value="MEDIUM">Medium</option>
+              <option value="HIGH">High</option>
             </select>
           </div>
 

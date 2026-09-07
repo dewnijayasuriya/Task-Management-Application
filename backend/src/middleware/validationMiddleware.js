@@ -1,5 +1,5 @@
 const AppError = require("../utils/AppError");
-const { STATUSES } = require("../models/Task");
+const { STATUSES, PRIORITIES } = require("../models/Task");
 
 function validateRegister(req, res, next) {
   const { name, email, password } = req.body;
@@ -18,7 +18,9 @@ function validateRegister(req, res, next) {
   }
 
   if (typeof password !== "string" || password.length < 6) {
-    return next(new AppError("Password must be at least 6 characters long", 400));
+    return next(
+      new AppError("Password must be at least 6 characters long", 400),
+    );
   }
 
   // Defense in depth: normal registration must never be able to set role
@@ -40,7 +42,7 @@ function validateLogin(req, res, next) {
 }
 
 function validateCreateTask(req, res, next) {
-  const { title, description, status } = req.body;
+  const { title, description, status, priority } = req.body;
 
   if (!title || typeof title !== "string" || !title.trim()) {
     return next(new AppError("Task title is required", 400));
@@ -52,7 +54,13 @@ function validateCreateTask(req, res, next) {
 
   if (status && !STATUSES.includes(status)) {
     return next(
-      new AppError(`Status must be one of: ${STATUSES.join(", ")}`, 400)
+      new AppError(`Status must be one of: ${STATUSES.join(", ")}`, 400),
+    );
+  }
+
+  if (priority && !PRIORITIES.includes(priority)) {
+    return next(
+      new AppError(`Priority must be one of: ${PRIORITIES.join(", ")}`, 400),
     );
   }
 
@@ -60,7 +68,7 @@ function validateCreateTask(req, res, next) {
 }
 
 function validateUpdateTask(req, res, next) {
-  const { title, description, status } = req.body;
+  const { title, description, status, priority } = req.body;
 
   if (title !== undefined && typeof title !== "string") {
     return next(new AppError("Task title must be a string", 400));
@@ -72,7 +80,13 @@ function validateUpdateTask(req, res, next) {
 
   if (status !== undefined && !STATUSES.includes(status)) {
     return next(
-      new AppError(`Status must be one of: ${STATUSES.join(", ")}`, 400)
+      new AppError(`Status must be one of: ${STATUSES.join(", ")}`, 400),
+    );
+  }
+
+  if (priority !== undefined && !PRIORITIES.includes(priority)) {
+    return next(
+      new AppError(`Priority must be one of: ${PRIORITIES.join(", ")}`, 400),
     );
   }
 
@@ -84,7 +98,7 @@ function validateStatusUpdate(req, res, next) {
 
   if (!status || !STATUSES.includes(status)) {
     return next(
-      new AppError(`Status must be one of: ${STATUSES.join(", ")}`, 400)
+      new AppError(`Status must be one of: ${STATUSES.join(", ")}`, 400),
     );
   }
 

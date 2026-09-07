@@ -13,6 +13,7 @@ export default function EditTaskModal({
   const [title, setTitle] = useState(task.title);
   const [description, setDescription] = useState(task.description || "");
   const [status, setStatus] = useState(task.status);
+  const [priority, setPriority] = useState(task.priority || "MEDIUM");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -32,6 +33,7 @@ export default function EditTaskModal({
         title: title.trim(),
         description: description.trim(),
         status,
+        priority,
       });
       onClose();
     } catch (err) {
@@ -115,6 +117,21 @@ export default function EditTaskModal({
               <option value="TODO">To Do</option>
               <option value="DOING">Doing</option>
               <option value="DONE">Done</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">
+              Priority
+            </label>
+            <select
+              value={priority}
+              onChange={(e) => setPriority(e.target.value)}
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+            >
+              <option value="LOW">Low</option>
+              <option value="MEDIUM">Medium</option>
+              <option value="HIGH">High</option>
             </select>
           </div>
 

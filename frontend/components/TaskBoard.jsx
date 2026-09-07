@@ -44,6 +44,7 @@ export default function TaskBoard() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [assigneeFilter, setAssigneeFilter] = useState("ALL");
+  const [priorityFilter, setPriorityFilter] = useState("ALL");
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -90,6 +91,9 @@ export default function TaskBoard() {
         task.description?.toLowerCase().includes(normalizedSearch);
       const matchesStatus =
         statusFilter === "ALL" || task.status === statusFilter;
+      const matchesPriority =
+        priorityFilter === "ALL" ||
+        (task.priority || "MEDIUM") === priorityFilter;
       const matchesAssignee =
         assigneeFilter === "ALL" ||
         (assigneeFilter === "UNASSIGNED" && !task.assignedUser) ||
@@ -97,9 +101,18 @@ export default function TaskBoard() {
           String(task.assignedUser?._id) === String(user.id)) ||
         String(task.assignedUser?._id) === assigneeFilter;
 
-      return matchesSearch && matchesStatus && matchesAssignee;
+      return (
+        matchesSearch && matchesStatus && matchesPriority && matchesAssignee
+      );
     });
-  }, [tasks, searchTerm, statusFilter, assigneeFilter, user.id]);
+  }, [
+    tasks,
+    searchTerm,
+    statusFilter,
+    priorityFilter,
+    assigneeFilter,
+    user.id,
+  ]);
 
   const tasksByStatus = useMemo(() => {
     const grouped = { TODO: [], DOING: [], DONE: [] };
@@ -214,7 +227,7 @@ export default function TaskBoard() {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-[minmax(0,2fr)_minmax(160px,1fr)_minmax(160px,1fr)] gap-3 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-[minmax(0,2fr)_repeat(3,minmax(140px,1fr))] gap-3 mb-6">
         <label className="sr-only" htmlFor="task-search">
           Search tasks
         </label>
@@ -240,6 +253,21 @@ export default function TaskBoard() {
           <option value="TODO">To Do</option>
           <option value="DOING">Doing</option>
           <option value="DONE">Done</option>
+        </select>
+
+        <label className="sr-only" htmlFor="task-priority-filter">
+          Filter tasks by priority
+        </label>
+        <select
+          id="task-priority-filter"
+          value={priorityFilter}
+          onChange={(event) => setPriorityFilter(event.target.value)}
+          className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500"
+        >
+          <option value="ALL">All priorities</option>
+          <option value="LOW">Low priority</option>
+          <option value="MEDIUM">Medium priority</option>
+          <option value="HIGH">High priority</option>
         </select>
 
         <label className="sr-only" htmlFor="task-assignee-filter">

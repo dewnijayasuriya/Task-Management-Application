@@ -44,6 +44,24 @@ function StatusBadge({ status }) {
   );
 }
 
+function PriorityBadge({ priority }) {
+  const priorityStyles = {
+    LOW: "bg-slate-100 text-slate-600",
+    MEDIUM: "bg-blue-50 text-blue-700",
+    HIGH: "bg-red-50 text-red-700",
+  };
+
+  return (
+    <span
+      className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+        priorityStyles[priority || "MEDIUM"]
+      }`}
+    >
+      {priority || "MEDIUM"}
+    </span>
+  );
+}
+
 function AdminUsersContent() {
   const [users, setUsers] = useState([]);
   const [tasks, setTasks] = useState([]);
@@ -189,6 +207,9 @@ function AdminUsersContent() {
                     Status
                   </th>
                   <th className="px-4 py-3 text-left font-medium text-slate-500">
+                    Priority
+                  </th>
+                  <th className="px-4 py-3 text-left font-medium text-slate-500">
                     Creator
                   </th>
                   <th className="px-4 py-3 text-left font-medium text-slate-500">
@@ -207,6 +228,9 @@ function AdminUsersContent() {
                     </td>
                     <td className="px-4 py-3">
                       <StatusBadge status={t.status} />
+                    </td>
+                    <td className="px-4 py-3">
+                      <PriorityBadge priority={t.priority} />
                     </td>
                     <td className="px-4 py-3 text-slate-600">
                       {t.creator?.name}

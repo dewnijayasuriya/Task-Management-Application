@@ -12,10 +12,27 @@ function formatDate(dateStr) {
   });
 }
 
-export default function TaskCard({ task, onAssignSelf, onEdit, onAssignClick }) {
+const PRIORITY_STYLES = {
+  LOW: "bg-slate-100 text-slate-600",
+  MEDIUM: "bg-blue-50 text-blue-700",
+  HIGH: "bg-red-50 text-red-700",
+};
+
+export default function TaskCard({
+  task,
+  onAssignSelf,
+  onEdit,
+  onAssignClick,
+}) {
   const { user } = useAuth();
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
-    useSortable({ id: task._id });
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: task._id });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -38,20 +55,35 @@ export default function TaskCard({ task, onAssignSelf, onEdit, onAssignClick }) 
       style={style}
       {...attributes}
       {...(canDrag ? listeners : {})}
-      title={canDrag ? undefined : "You don't have permission to move this task"}
+      title={
+        canDrag ? undefined : "You don't have permission to move this task"
+      }
       className={`bg-white rounded-lg border border-slate-200 shadow-sm transition-shadow p-4 touch-none ${
-        canDrag ? "hover:shadow-md cursor-grab active:cursor-grabbing" : "cursor-default"
+        canDrag
+          ? "hover:shadow-md cursor-grab active:cursor-grabbing"
+          : "cursor-default"
       }`}
     >
       <div className="flex items-start justify-between gap-2 mb-2">
-        <h4 className="font-medium text-slate-900 text-sm leading-snug">{task.title}</h4>
+        <h4 className="font-medium text-slate-900 text-sm leading-snug">
+          {task.title}
+        </h4>
       </div>
 
       {task.description && (
-        <p className="text-xs text-slate-500 mb-3 line-clamp-3">{task.description}</p>
+        <p className="text-xs text-slate-500 mb-3 line-clamp-3">
+          {task.description}
+        </p>
       )}
 
       <div className="flex flex-wrap items-center gap-1.5 mb-3">
+        <span
+          className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium ${
+            PRIORITY_STYLES[task.priority || "MEDIUM"]
+          }`}
+        >
+          {task.priority || "MEDIUM"} priority
+        </span>
         <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-slate-100 text-slate-600">
           Creator: {task.creator?.name || "Unknown"}
         </span>

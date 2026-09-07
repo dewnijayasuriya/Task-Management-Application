@@ -10,8 +10,13 @@ export async function fetchTaskById(id) {
   return data.task;
 }
 
-export async function createTask({ title, description, status }) {
-  const { data } = await api.post("/tasks", { title, description, status });
+export async function createTask({ title, description, status, priority }) {
+  const { data } = await api.post("/tasks", {
+    title,
+    description,
+    status,
+    priority,
+  });
   return data.task;
 }
 
@@ -26,7 +31,10 @@ export async function updateTaskStatus(id, status) {
 }
 
 export async function assignTask(id, userId) {
-  const { data } = await api.patch(`/tasks/${id}/assign`, userId ? { userId } : {});
+  const { data } = await api.patch(
+    `/tasks/${id}/assign`,
+    userId ? { userId } : {},
+  );
   return data.task;
 }
 

@@ -3,7 +3,7 @@ const Task = require("../models/Task");
 const User = require("../models/User");
 const AppError = require("../utils/AppError");
 const asyncHandler = require("../utils/asyncHandler");
-const { STATUSES } = require("../models/Task");
+const { STATUSES, PRIORITIES } = require("../models/Task");
 
 const POPULATE_FIELDS = [
   { path: "creator", select: "name email role" },
@@ -26,12 +26,13 @@ function isOwnerOrAdmin(task, user) {
 
 // POST /api/tasks
 const createTask = asyncHandler(async (req, res) => {
-  const { title, description, status } = req.body;
+  const { title, description, status, priority } = req.body;
 
   const task = await Task.create({
     title: title.trim(),
     description: description ? description.trim() : "",
     status: status && STATUSES.includes(status) ? status : "TODO",
+    priority: priority && PRIORITIES.includes(priority) ? priority : "MEDIUM",
     creator: req.user._id,
     assignedUser: null,
   });
@@ -80,7 +81,9 @@ const getTaskById = asyncHandler(async (req, res) => {
 
   if (req.user.role !== "ADMIN") {
     const creatorId = task.creator._id.toString();
-    const assignedId = task.assignedUser ? task.assignedUser._id.toString() : null;
+    const assignedId = task.assignedUser
+      ? task.assignedUser._id.toString()
+      : null;
     const isUnassigned = !task.assignedUser;
     const isAllowed =
       creatorId === req.user._id.toString() ||
@@ -115,7 +118,7 @@ const updateTask = asyncHandler(async (req, res) => {
     throw new AppError("You do not have permission to update this task", 403);
   }
 
-  const { title, description, status } = req.body;
+  const { title, description, status, priority } = req.body;
 
   if (title !== undefined) {
     if (!title || !title.trim()) {
@@ -133,6 +136,16 @@ const updateTask = asyncHandler(async (req, res) => {
       throw new AppError(`Status must be one of: ${STATUSES.join(", ")}`, 400);
     }
     task.status = status;
+  }
+
+  if (priority !== undefined) {
+    if (!PRIORITIES.includes(priority)) {
+      throw new AppError(
+        `Priority must be one of: ${PRIORITIES.join(", ")}`,
+        400,
+      );
+    }
+    task.priority = priority;
   }
 
   // assignedUser is intentionally ignored here; assignment has its own
@@ -166,7 +179,7 @@ const updateTaskStatus = asyncHandler(async (req, res) => {
   if (!isOwnerOrAdmin(task, req.user)) {
     throw new AppError(
       "You do not have permission to change this task's status",
-      403
+      403,
     );
   }
 
@@ -213,14 +226,14 @@ const assignTask = asyncHandler(async (req, res) => {
     if (userId && userId.toString() !== req.user._id.toString()) {
       throw new AppError(
         "You are only allowed to assign this task to yourself",
-        403
+        403,
       );
     }
 
     if (task.assignedUser) {
       throw new AppError(
         "This task is already assigned and cannot be reassigned by a normal user",
-        403
+        403,
       );
     }
 
