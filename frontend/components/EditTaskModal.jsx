@@ -3,7 +3,13 @@
 import { useState } from "react";
 import Alert from "@/components/Alert";
 
-export default function EditTaskModal({ task, onClose, onSave, onDelete, canDelete }) {
+export default function EditTaskModal({
+  task,
+  onClose,
+  onSave,
+  onDelete,
+  canDelete,
+}) {
   const [title, setTitle] = useState(task.title);
   const [description, setDescription] = useState(task.description || "");
   const [status, setStatus] = useState(task.status);
@@ -22,7 +28,11 @@ export default function EditTaskModal({ task, onClose, onSave, onDelete, canDele
 
     setSubmitting(true);
     try {
-      await onSave(task._id, { title: title.trim(), description: description.trim(), status });
+      await onSave(task._id, {
+        title: title.trim(),
+        description: description.trim(),
+        status,
+      });
       onClose();
     } catch (err) {
       setError(err.message || "Failed to update task.");
@@ -32,6 +42,12 @@ export default function EditTaskModal({ task, onClose, onSave, onDelete, canDele
   };
 
   const handleDelete = async () => {
+    const confirmed = window.confirm(
+      `Delete "${task.title}"? This action cannot be undone.`,
+    );
+
+    if (!confirmed) return;
+
     setError("");
     setDeleting(true);
     try {
@@ -48,7 +64,10 @@ export default function EditTaskModal({ task, onClose, onSave, onDelete, canDele
       <div className="w-full max-w-lg bg-white rounded-2xl shadow-xl p-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-slate-900">Edit Task</h2>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-600">
+          <button
+            onClick={onClose}
+            className="text-slate-400 hover:text-slate-600"
+          >
             &times;
           </button>
         </div>
@@ -61,7 +80,9 @@ export default function EditTaskModal({ task, onClose, onSave, onDelete, canDele
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Title</label>
+            <label className="block text-sm font-medium text-slate-700 mb-1">
+              Title
+            </label>
             <input
               type="text"
               value={title}
@@ -71,7 +92,9 @@ export default function EditTaskModal({ task, onClose, onSave, onDelete, canDele
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Description</label>
+            <label className="block text-sm font-medium text-slate-700 mb-1">
+              Description
+            </label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -81,7 +104,9 @@ export default function EditTaskModal({ task, onClose, onSave, onDelete, canDele
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Status</label>
+            <label className="block text-sm font-medium text-slate-700 mb-1">
+              Status
+            </label>
             <select
               value={status}
               onChange={(e) => setStatus(e.target.value)}
