@@ -6,9 +6,12 @@ import { useAuth } from "@/context/AuthContext";
 
 function formatDate(dateStr) {
   if (!dateStr) return "";
-  return new Date(dateStr).toLocaleDateString(undefined, {
+  return new Date(dateStr).toLocaleString(undefined, {
+    year: "numeric",
     month: "short",
     day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
   });
 }
 
@@ -98,7 +101,8 @@ export default function TaskCard({
         )}
       </div>
 
-      <div className="flex items-center justify-between text-[10px] text-slate-400 mb-2">
+      <div className="flex flex-col gap-1 text-[10px] text-slate-400 mb-2">
+        <span>Created {formatDate(task.createdAt)}</span>
         <span>Updated {formatDate(task.updatedAt)}</span>
       </div>
 
