@@ -1,3 +1,4 @@
+<img width="1920" height="991" alt="landing" src="https://github.com/user-attachments/assets/3456da05-cbbc-49bf-a142-4a4d8007bc90" />
 # TaskBoard — Full-Stack Task Management Application
 
 A Trello-like task management application with drag-and-drop status
