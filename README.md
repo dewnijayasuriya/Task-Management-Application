@@ -417,7 +417,7 @@ Expect `404 { success: false, message: "Task not found" }`.
 - **Backend:** Deployed on [Render](https://render.com) as a Node/Express
   web service.
 - **Frontend:** Deployed on [Vercel](https://vercel.com) as a Next.js
-  application.
+  application. https://task-management-application-flame-nu.vercel.app/ 
 - The deployed frontend uses the Render backend API URL through
   `NEXT_PUBLIC_API_URL`.
 - Backend CORS is configured with the deployed Vercel URL through
