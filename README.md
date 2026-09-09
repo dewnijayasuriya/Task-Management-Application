@@ -1,4 +1,3 @@
-<img width="1920" height="991" alt="landing" src="https://github.com/user-attachments/assets/3456da05-cbbc-49bf-a142-4a4d8007bc90" />
 # TaskBoard — Full-Stack Task Management Application
 
 A Trello-like task management application with drag-and-drop status
@@ -430,23 +429,32 @@ The following screenshots are included directly in this README:
 
 ### Landing Page
 
-![Landing page](docs/screenshots/landing.png)
+<img width="1920" height="991" alt="landing" src="https://github.com/user-attachments/assets/3456da05-cbbc-49bf-a142-4a4d8007bc90" />
 
 ### Login Page
 
-![Login page](docs/screenshots/login.png)
+<img width="1920" height="990" alt="login" src="https://github.com/user-attachments/assets/3c88f014-62ff-4369-b224-0154fb591367" />
 
 ### User Task Board
 
-![User task board](docs/screenshots/dashboard.png)
+<img width="1920" height="987" alt="dashboard" src="https://github.com/user-attachments/assets/58d7f54b-2505-48de-97dd-9d7e2bdcad13" />
+
+### Create Task 
+
+<img width="1916" height="973" alt="Create Task" src="https://github.com/user-attachments/assets/ee00b551-6e92-4060-a4f9-3356964ad43d" />
+
+### Admin Dashboard
+
+<img width="1916" height="990" alt="admin-dashboard" src="https://github.com/user-attachments/assets/522dae2b-f4b3-40bd-bdd3-e04abf28edea" />
+
+### Assign Task
+
+<img width="1918" height="980" alt="assign-task" src="https://github.com/user-attachments/assets/c3b70bfa-d062-4aa4-ae02-90051aa13a9c" />
 
 ### Admin Users
 
-![Admin users](docs/screenshots/admin-users.png)
+<img width="1915" height="988" alt="admin-users" src="https://github.com/user-attachments/assets/9c31815d-8db0-4ea6-aada-dd61af78d1e2" />
 
 ### Admin Tasks
 
-![Admin tasks](docs/screenshots/admin-tasks.png)
-
-Screenshots should show the three task columns, task priorities, and admin
-assignment controls.
+<img width="1920" height="989" alt="admin-tasks" src="https://github.com/user-attachments/assets/1af977b0-d683-41c1-8060-2474e1a86d40" />
