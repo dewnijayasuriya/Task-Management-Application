@@ -17,7 +17,7 @@ async function seedAdmin() {
 
   if (!ADMIN_EMAIL || !ADMIN_PASSWORD) {
     console.error(
-      "ADMIN_EMAIL and ADMIN_PASSWORD must be set in the environment to seed an administrator."
+      "ADMIN_EMAIL and ADMIN_PASSWORD must be set in the environment to seed an administrator.",
     );
     process.exit(1);
   }
@@ -26,16 +26,16 @@ async function seedAdmin() {
     await mongoose.connect(MONGODB_URI);
     console.log("Connected to MongoDB for admin seeding.");
 
-    const existingAdmin = await User.findOne({ email: ADMIN_EMAIL.toLowerCase() });
+    const existingAdmin = await User.findOne({
+      email: ADMIN_EMAIL.toLowerCase(),
+    });
 
     if (existingAdmin) {
-      if (existingAdmin.role !== "ADMIN") {
-        existingAdmin.role = "ADMIN";
-        await existingAdmin.save();
-        console.log(`Existing user promoted to ADMIN: ${existingAdmin.email}`);
-      } else {
-        console.log(`Administrator already exists: ${existingAdmin.email}`);
-      }
+      existingAdmin.name = ADMIN_NAME;
+      existingAdmin.password = ADMIN_PASSWORD;
+      existingAdmin.role = "ADMIN";
+      await existingAdmin.save();
+      console.log(`Administrator credentials updated: ${existingAdmin.email}`);
     } else {
       // Password hashing is handled by the User model's pre-save hook.
       const admin = await User.create({
