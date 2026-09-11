@@ -7,6 +7,6 @@ const router = express.Router();
 
 router.use(authenticateToken, authorizeRoles("ADMIN"));
 
-router.get("/", getUsers);
+router.get("/", getUsers); // Only admins can view all users.
 
 module.exports = router;

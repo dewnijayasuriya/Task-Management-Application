@@ -5,6 +5,7 @@ const connectDB = require("./config/db");
 
 const PORT = process.env.PORT || 5000;
 
+// Start the server after establishing a database connection
 async function startServer() {
   try {
     await connectDB();
@@ -14,7 +15,7 @@ async function startServer() {
     });
   } catch (error) {
     console.error("Failed to start server:", error.message);
-    process.exit(1);
+    process.exit(1); // 1 indicates that the process ended because of an error
   }
 }
 

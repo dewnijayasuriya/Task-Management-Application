@@ -81,6 +81,8 @@ export default function TaskBoard() {
     );
   }, [tasks]);
 
+  // Filters tasks based on search term, status, priority, and assignee.
+  // The useMemo hook ensures that the filtered tasks are only recalculated when the dependencies change, improving performance.
   const filteredTasks = useMemo(() => {
     const normalizedSearch = searchTerm.trim().toLowerCase();
 
@@ -114,6 +116,7 @@ export default function TaskBoard() {
     user.id,
   ]);
 
+  // Groups the filtered tasks by their status (TODO, DOING, DONE) for display in the respective columns.
   const tasksByStatus = useMemo(() => {
     const grouped = { TODO: [], DOING: [], DONE: [] };
     for (const task of filteredTasks) {

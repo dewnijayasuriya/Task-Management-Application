@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema(
     name: {
       type: String,
       required: [true, "Name is required"],
-      trim: true,
+      trim: true, // Removes unnecessary spaces from the beginning and end.
       minlength: [2, "Name must be at least 2 characters long"],
       maxlength: [100, "Name must be at most 100 characters long"],
     },
@@ -39,19 +39,22 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// Pre-save middleware to hash the password before saving it to the database.
 userSchema.pre("save", async function hashPassword(next) {
-  if (!this.isModified("password")) {
+  if (!this.isModified("password")) { // If the password field hasn't been modified (e.g., during an update), we don't need to hash it again.
     return next();
   }
   const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password, salt);
+  this.password = await bcrypt.hash(this.password, salt); // Hash the password using bcrypt with a salt factor of 10.
   next();
 });
 
+// bcrypt checks whether the entered password matches the stored hash.
 userSchema.methods.matchPassword = function matchPassword(candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);
 };
 
+// This method returns a safe representation of the user object, excluding sensitive information like the password.
 userSchema.methods.toSafeObject = function toSafeObject() {
   return {
     id: this._id,

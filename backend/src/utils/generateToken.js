@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 
+// creates a signed JWT containing the user's ID and role, with an expiration time.
 function generateToken(user) {
   return jwt.sign(
     { id: user._id.toString(), role: user.role },

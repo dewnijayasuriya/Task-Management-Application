@@ -21,7 +21,7 @@ export default function TaskColumn({
   onEdit,
   onAssignClick,
 }) {
-  const { setNodeRef, isOver } = useDroppable({ id });
+  const { setNodeRef, isOver } = useDroppable({ id }); //setNodeRef → connects the HTML element to dnd-kit. isOver → tells us if a task is currently being dragged over the column.
   const styles = COLUMN_STYLES[id] || COLUMN_STYLES.TODO;
 
   return (

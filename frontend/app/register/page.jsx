@@ -20,7 +20,7 @@ export default function RegisterPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => {
+  const handleChange = (e) => { // Updates the correct field whenever the user types.
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 

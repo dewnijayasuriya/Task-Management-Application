@@ -5,11 +5,13 @@ const AppError = require("../utils/AppError");
 const asyncHandler = require("../utils/asyncHandler");
 const { STATUSES, PRIORITIES } = require("../models/Task");
 
+// This defines which user information should be included when retrieving a task.
 const POPULATE_FIELDS = [
   { path: "creator", select: "name email role" },
   { path: "assignedUser", select: "name email role" },
 ];
 
+// Helper function to determine if the authenticated user is either the creator of the task, the assigned user, or an admin.
 function isOwnerOrAdmin(task, user) {
   if (user.role === "ADMIN") return true;
   const creatorId = task.creator._id ? task.creator._id : task.creator;
@@ -37,7 +39,7 @@ const createTask = asyncHandler(async (req, res) => {
     assignedUser: null,
   });
 
-  await task.populate(POPULATE_FIELDS);
+  await task.populate(POPULATE_FIELDS); // adds creator/assigned-user information.
 
   res.status(201).json({ success: true, task });
 });
@@ -48,7 +50,7 @@ const createTask = asyncHandler(async (req, res) => {
 const getTasks = asyncHandler(async (req, res) => {
   let filter = {};
 
-  if (req.user.role !== "ADMIN") {
+  if (req.user.role !== "ADMIN") { // Normal users see tasks they created or are assigned to, plus unassigned tasks.
     filter = {
       $or: [
         { creator: req.user._id },
@@ -220,7 +222,7 @@ const assignTask = asyncHandler(async (req, res) => {
       throw new AppError("Target user not found", 404);
     }
 
-    task.assignedUser = targetUser._id;
+    task.assignedUser = targetUser._id; // Admins can assign/reassign to any user, at any time.
   } else {
     // Normal user path — strictly self-assign, and only when currently unassigned.
     if (userId && userId.toString() !== req.user._id.toString()) {
@@ -241,7 +243,7 @@ const assignTask = asyncHandler(async (req, res) => {
   }
 
   await task.save();
-  await task.populate(POPULATE_FIELDS);
+  await task.populate(POPULATE_FIELDS); // adds creator/assigned-user information.
 
   res.status(200).json({ success: true, task });
 });

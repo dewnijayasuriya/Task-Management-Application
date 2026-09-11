@@ -6,11 +6,11 @@ import { useAuth } from "@/context/AuthContext";
 import Spinner from "@/components/Spinner";
 
 export default function ProtectedRoute({ children, adminOnly = false }) {
-  const { user, loading } = useAuth();
+  const { user, loading } = useAuth(); //Gets the current user and loading status from AuthContext.
   const router = useRouter();
 
   useEffect(() => {
-    if (loading) return;
+    if (loading) return; // It waits until AuthContext finishes checking the user's authentication.
 
     if (!user) {
       router.replace("/login");

@@ -8,6 +8,7 @@ export function getAuthToken() {
   return window.localStorage.getItem(TOKEN_KEY);
 }
 
+// Sets the JWT token in local storage for authentication purposes.
 export function setAuthToken(token) {
   if (typeof window === "undefined") return;
   window.localStorage.setItem(TOKEN_KEY, token);
@@ -18,6 +19,7 @@ export function clearAuthToken() {
   window.localStorage.removeItem(TOKEN_KEY);
 }
 
+// Creates an reusable axios instance with a base URL and default headers.
 const api = axios.create({
   baseURL: API_URL,
   headers: {
@@ -25,6 +27,7 @@ const api = axios.create({
   },
 });
 
+// Request interceptor:Runs before every API request and automatically attaches the authenticated users's JWT token
 api.interceptors.request.use((config) => {
   const token = getAuthToken();
   if (token) {
@@ -33,6 +36,7 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// Response interceptor: Handles errors from API responses, including network errors, unauthorized access (401), forbidden access (403), and server errors (500).
 api.interceptors.response.use(
   (response) => response,
   (error) => {

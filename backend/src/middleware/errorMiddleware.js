@@ -9,6 +9,7 @@ function errorHandler(err, req, res, next) {
   let message = err.message || "Internal server error";
 
   // Mongoose bad ObjectId
+  // This error occurs when an invalid ObjectId is provided in a request (e.g., for a MongoDB document).
   if (err.name === "CastError") {
     statusCode = 400;
     message = `Invalid value for field '${err.path}': ${err.value}`;
@@ -35,6 +36,8 @@ function errorHandler(err, req, res, next) {
     message = "Malformed JSON in request body";
   }
 
+  // Log detailed errors during development.
+  // Avoid exposing unnecessary server information in production
   if (process.env.NODE_ENV !== "production") {
     console.error(err);
   }
@@ -45,6 +48,7 @@ function errorHandler(err, req, res, next) {
     message = "Internal server error";
   }
 
+  // Send a consistent JSON error response to the client.
   res.status(statusCode).json({
     success: false,
     message,

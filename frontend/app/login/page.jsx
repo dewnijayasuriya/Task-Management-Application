@@ -34,8 +34,8 @@ export default function LoginPage() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
+    e.preventDefault(); // Prevents the default form submission behavior, which would cause a page reload.
+    setError(""); // Clears any previous error messages before attempting to log in.
 
     if (!form.email || !form.password) {
       setError("Please enter both email and password.");
@@ -44,7 +44,7 @@ export default function LoginPage() {
 
     setLoading(true);
     try {
-      await login(form.email.trim(), form.password);
+      await login(form.email.trim(), form.password); // Calls the login function from AuthContext to authenticate the user with the provided email and password.
       router.push("/dashboard");
     } catch (err) {
       setError(err.message || "Login failed. Please try again.");

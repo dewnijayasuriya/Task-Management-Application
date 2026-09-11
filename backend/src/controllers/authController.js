@@ -9,7 +9,7 @@ const register = asyncHandler(async (req, res) => {
 
   const existingUser = await User.findOne({ email: email.toLowerCase() });
   if (existingUser) {
-    throw new AppError("An account with this email already exists", 409);
+    throw new AppError("An account with this email already exists", 409); // Conflict
   }
 
   // role is always forced to USER; ADMIN accounts can only be created via the seed script
@@ -34,7 +34,7 @@ const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
   const user = await User.findOne({ email: email.toLowerCase().trim() }).select(
-    "+password"
+    "+password" // Explicitly include the password field in the query result, as it is excluded by default in the User model for security reasons.
   );
 
   if (!user || !(await user.matchPassword(password))) {

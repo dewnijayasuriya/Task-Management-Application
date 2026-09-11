@@ -50,6 +50,7 @@ const taskSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
+// Indexes for efficient querying based on status, priority, creator, and assigned user.
 taskSchema.index({ status: 1 });
 taskSchema.index({ priority: 1 });
 taskSchema.index({ creator: 1 });
